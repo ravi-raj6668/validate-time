@@ -1,6 +1,7 @@
 package com.java.dev.validate_data_time.controller;
 
 import com.java.dev.validate_data_time.entity.CustomerData;
+import com.java.dev.validate_data_time.entity.CustomersData;
 import com.java.dev.validate_data_time.servcie.CustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -33,6 +34,13 @@ public class CustomerController {
     public ResponseEntity<List<CustomerData>> getCustomerData(HttpServletRequest httpServletRequest) {
         LOG.info("Inside get customer data() => {} ", httpServletRequest.getRemoteAddr());
         List<CustomerData> customerDataList = customerService.getCustomerData();
+        return new ResponseEntity<>(customerDataList, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/getCustomerData", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CustomersData>> getCustomerData1(HttpServletRequest httpServletRequest) {
+        LOG.info("Inside get customer data() => {} ", httpServletRequest.getRemoteAddr());
+        List<CustomersData> customerDataList = customerService.getCustomerData1();
         return new ResponseEntity<>(customerDataList, HttpStatus.OK);
     }
 }

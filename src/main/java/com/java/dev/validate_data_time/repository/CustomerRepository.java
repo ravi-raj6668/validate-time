@@ -1,6 +1,7 @@
 package com.java.dev.validate_data_time.repository;
 
 import com.java.dev.validate_data_time.entity.CustomerData;
+import com.java.dev.validate_data_time.entity.CustomersData;
 import com.java.dev.validate_data_time.helper.ResultSetIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -86,4 +88,58 @@ public class CustomerRepository {
             }
         }
     }
+
+
+    //TODO : new method for testing only
+    public List<CustomersData> getData1() {
+        LOG.info("Fetch data from db");
+        List<CustomersData> customerDataList = new ArrayList<>();
+        String query = "select id, first_name, last_name, email, gender, scheduletime from customer_data";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet rs = statement.executeQuery()) {
+            addDataToList1(rs, customerDataList);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error while fetching data from databases", e);
+        }
+
+     return customerDataList;
+
+
+    }
+
+    private void addDataToList1(ResultSet rs, List<CustomersData> customerDataList) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime fourHoursAgo = LocalDateTime.now().minusHours(4);
+        String userId = "Talie";
+        for (ResultSet row : new ResultSetIterable(rs)) {
+            try {
+                String scheduleTime = row.getString("scheduletime");
+                LocalDateTime requiredTime = LocalDateTime.parse(scheduleTime, dateTimeFormatter);
+                if(isSpecialUser(userId)) {
+                    if (requiredTime.isAfter(fourHoursAgo)) {
+                        CustomersData data = new CustomersData();
+                        data.setId(row.getInt("id"));
+                        data.setFirst_name(row.getString("first_name"));
+                        data.setLast_name(row.getString("last_name"));
+                        data.setEmail(row.getString("email"));
+                        data.setGender(row.getString("gender"));
+                        data.setScheduletime(row.getString("scheduletime"));
+                        customerDataList.add(data);
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Error processing result set row data", e);
+            }
+        }
+    }
+
+    private boolean isSpecialUser(String userId) {
+        // Example: Fetch special users from a list or database
+        List<String> specialUsers = List.of("Andreana", "Morissa", "Tallie"); // Example special users
+        return specialUsers.contains(userId);
+    }
+
 }

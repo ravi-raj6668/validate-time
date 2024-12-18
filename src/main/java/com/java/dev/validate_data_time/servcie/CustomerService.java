@@ -1,6 +1,7 @@
 package com.java.dev.validate_data_time.servcie;
 
 import com.java.dev.validate_data_time.entity.CustomerData;
+import com.java.dev.validate_data_time.entity.CustomersData;
 import com.java.dev.validate_data_time.repository.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,5 +24,10 @@ public class CustomerService {
     public List<CustomerData> getCustomerData() {
         LOG.info("inside get customer data() fetch from db");
         return customerRepository.getData();
+    }
+
+    public List<CustomersData> getCustomerData1() {
+        LOG.info("inside get customer data() fetch from db");
+        return customerRepository.getData1();
     }
 }
